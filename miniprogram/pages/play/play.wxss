@@ -1,0 +1,74 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #16213e;
+  padding: 40rpx;
+}
+
+.play-header {
+  margin-bottom: 40rpx;
+}
+
+.play-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #e94560;
+}
+
+.play-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.code-display {
+  background-color: #0f3460;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  margin-bottom: 40rpx;
+  min-height: 200rpx;
+}
+
+.code-text {
+  font-family: 'Courier New', monospace;
+  font-size: 40rpx;
+  color: #00d9ff;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.play-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.wpm-slider {
+  width: 100%;
+}
+
+.slider-label {
+  font-size: 28rpx;
+  color: #a0a0a0;
+  text-align: center;
+}
+
+.btn-play {
+  font-size: 36rpx;
+  padding: 30rpx;
+  background-color: #e94560;
+  color: #fff;
+  border-radius: 16rpx;
+  margin-top: 20rpx;
+}
+
+.btn-play::after {
+  border: none;
+}
+
+.btn-play.playing {
+  background-color: #0f3460;
+  color: #e94560;
+  border: 2rpx solid #e94560;
+}

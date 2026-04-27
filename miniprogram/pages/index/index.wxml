@@ -1,0 +1,84 @@
+<view class="container">
+  <!-- 上半区：实时时序显示 -->
+  <view class="display-area">
+    <view class="display-header">
+      <text class="display-title">时序记录</text>
+      <view class="display-actions">
+        <button class="btn-clear" bindtap="onClear">清空</button>
+        <button class="btn-send {{timingText.length > 0 ? 'active' : ''}}" bindtap="onSend">保存</button>
+      </view>
+    </view>
+    <scroll-view class="timing-scroll" scroll-y enhanced show-scrollbar>
+      <text class="timing-text {{timingText.length === 0 ? 'placeholder' : ''}}">
+        {{timingText || '按下电键开始输入...'}}
+      </text>
+    </scroll-view>
+    <view class="wpm-control">
+      <text class="wpm-label">速度</text>
+      <slider class="wpm-slider" 
+              min="5" 
+              max="40" 
+              value="{{wpm}}" 
+              show-value
+              activeColor="#e94560"
+              backgroundColor="#0f3460"
+              block-color="#e94560"
+              bindchange="onWpmChange"/>
+      <text class="wpm-value">{{wpm}} WPM</text>
+    </view>
+  </view>
+
+  <!-- 中间：模拟报文列表 -->
+  <view class="list-area">
+    <view class="list-header">
+      <text class="list-title">模拟报文</text>
+      <button class="btn-refresh" bindtap="onRefresh">刷新</button>
+    </view>
+    <scroll-view class="list-scroll" scroll-y enhanced show-scrollbar>
+      <block wx:if="{{cwList.length > 0}}">
+        <view class="cw-item" wx:for="{{cwList}}" wx:key="_id">
+          <view class="cw-content">
+            <text class="cw-code">{{item.code}}</text>
+            <view class="cw-meta">
+              <text class="cw-wpm">{{item.wpm}} WPM</text>
+              <text class="cw-time">{{item.timeStr}}</text>
+            </view>
+          </view>
+          <button class="btn-play {{playingId === item._id ? 'playing' : ''}}" 
+                  bindtap="onPlay" 
+                  data-id="{{item._id}}"
+                  data-code="{{item.code}}"
+                  data-wpm="{{item.wpm}}">
+            {{playingId === item._id ? '播放中...' : '播放'}}
+          </button>
+        </view>
+      </block>
+      <view class="list-empty" wx:else>
+        <text>暂无报文</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 下半区：Paddle 电键 -->
+  <view class="paddle-area">
+    <view class="paddle-hint">
+      <text>左桨: 点(dit) · 右桨: 划(dah)</text>
+    </view>
+    <view class="paddle-buttons">
+      <button class="paddle-left {{isLeftPressed ? 'pressed' : ''}}"
+              bindtouchstart="onLeftPress"
+              bindtouchend="onLeftRelease"
+              bindtouchcancel="onLeftRelease">
+        <view class="paddle-label">·</view>
+        <view class="paddle-sublabel">DIT</view>
+      </button>
+      <button class="paddle-right {{isRightPressed ? 'pressed' : ''}}"
+              bindtouchstart="onRightPress"
+              bindtouchend="onRightRelease"
+              bindtouchcancel="onRightRelease">
+        <view class="paddle-label">−</view>
+        <view class="paddle-sublabel">DAH</view>
+      </button>
+    </view>
+  </view>
+</view>

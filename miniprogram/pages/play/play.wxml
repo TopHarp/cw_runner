@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="play-header">
+    <text class="play-title">CW 播放</text>
+  </view>
+  
+  <view class="play-content">
+    <view class="code-display">
+      <text class="code-text">{{code}}</text>
+    </view>
+    
+    <view class="play-controls">
+      <slider class="wpm-slider" 
+              min="5" 
+              max="40" 
+              value="{{wpm}}" 
+              show-value
+              bindchange="onWpmChange"/>
+      <text class="slider-label">速度: {{wpm}} WPM</text>
+      
+      <button class="btn-play {{isPlaying ? 'playing' : ''}}" bindtap="onPlay">
+        {{isPlaying ? '播放中...' : '播放'}}
+      </button>
+    </view>
+  </view>
+</view>

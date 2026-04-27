@@ -1,0 +1,316 @@
+/* 首页样式 */
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #16213e;
+}
+
+/* ==================== 上半区：时序显示 ==================== */
+
+.display-area {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx 24rpx;
+  border-bottom: 2rpx solid #0f3460;
+}
+
+.display-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.display-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #e94560;
+}
+
+.display-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.btn-clear {
+  font-size: 26rpx;
+  padding: 10rpx 24rpx;
+  background-color: #0f3460;
+  color: #a0a0a0;
+  border: 2rpx solid #333;
+  border-radius: 8rpx;
+  line-height: 1.5;
+}
+
+.btn-clear::after {
+  border: none;
+}
+
+.btn-send {
+  font-size: 26rpx;
+  padding: 10rpx 24rpx;
+  background-color: #333;
+  color: #666;
+  border-radius: 8rpx;
+  line-height: 1.5;
+  transition: all 0.2s;
+}
+
+.btn-send::after {
+  border: none;
+}
+
+.btn-send.active {
+  background-color: #e94560;
+  color: #fff;
+}
+
+.timing-scroll {
+  flex: 1;
+  background-color: #0f3460;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 12rpx;
+}
+
+.timing-text {
+  font-family: 'Courier New', monospace;
+  font-size: 36rpx;
+  color: #00d9ff;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.timing-text.placeholder {
+  color: #555;
+  font-size: 28rpx;
+}
+
+.wpm-control {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.wpm-label {
+  font-size: 24rpx;
+  color: #a0a0a0;
+  flex-shrink: 0;
+}
+
+.wpm-slider {
+  flex: 1;
+}
+
+.wpm-value {
+  font-size: 24rpx;
+  color: #e94560;
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 100rpx;
+  text-align: right;
+}
+
+/* ==================== 中间：模拟报文列表 ==================== */
+
+.list-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx 24rpx;
+  overflow: hidden;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.list-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #e94560;
+}
+
+.btn-refresh {
+  font-size: 26rpx;
+  padding: 10rpx 24rpx;
+  background-color: #0f3460;
+  color: #e94560;
+  border: 2rpx solid #e94560;
+  border-radius: 8rpx;
+  line-height: 1.5;
+}
+
+.btn-refresh::after {
+  border: none;
+}
+
+.btn-refresh:active {
+  opacity: 0.7;
+}
+
+.list-scroll {
+  flex: 1;
+}
+
+.cw-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0f3460;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.cw-content {
+  flex: 1;
+  min-width: 0;
+  margin-right: 20rpx;
+}
+
+.cw-code {
+  font-family: 'Courier New', monospace;
+  font-size: 32rpx;
+  color: #00d9ff;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.cw-meta {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 12rpx;
+}
+
+.cw-wpm {
+  font-size: 24rpx;
+  color: #e94560;
+  background-color: rgba(233, 69, 96, 0.15);
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.cw-time {
+  font-size: 24rpx;
+  color: #a0a0a0;
+}
+
+.btn-play {
+  flex-shrink: 0;
+  font-size: 26rpx;
+  padding: 16rpx 32rpx;
+  background-color: #e94560;
+  color: #fff;
+  border-radius: 12rpx;
+  line-height: 1.5;
+}
+
+.btn-play::after {
+  border: none;
+}
+
+.btn-play:active {
+  opacity: 0.7;
+}
+
+.btn-play.playing {
+  background-color: #0f3460;
+  color: #e94560;
+  border: 2rpx solid #e94560;
+}
+
+.list-empty {
+  text-align: center;
+  padding: 60rpx 0;
+  color: #555;
+  font-size: 28rpx;
+}
+
+/* ==================== 下半区：Paddle 电键 ==================== */
+
+.paddle-area {
+  flex: 0 0 auto;
+  padding: 20rpx 24rpx 40rpx;
+  border-top: 2rpx solid #0f3460;
+}
+
+.paddle-hint {
+  text-align: center;
+  margin-bottom: 16rpx;
+}
+
+.paddle-hint text {
+  font-size: 24rpx;
+  color: #a0a0a0;
+}
+
+.paddle-buttons {
+  display: flex;
+  gap: 24rpx;
+}
+
+.paddle-left,
+.paddle-right {
+  flex: 1;
+  height: 200rpx;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.paddle-left::after,
+.paddle-right::after {
+  border: none;
+}
+
+.paddle-left {
+  background-color: #0f3460;
+  border: 4rpx solid #00d9ff;
+}
+
+.paddle-right {
+  background-color: #0f3460;
+  border: 4rpx solid #e94560;
+}
+
+.paddle-left.pressed {
+  background-color: rgba(0, 217, 255, 0.3);
+  transform: scale(0.97);
+}
+
+.paddle-right.pressed {
+  background-color: rgba(233, 69, 96, 0.3);
+  transform: scale(0.97);
+}
+
+.paddle-label {
+  font-size: 64rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.paddle-left .paddle-label {
+  color: #00d9ff;
+}
+
+.paddle-right .paddle-label {
+  color: #e94560;
+}
+
+.paddle-sublabel {
+  font-size: 24rpx;
+  margin-top: 12rpx;
+  color: #a0a0a0;
+  font-weight: 500;
+  letter-spacing: 4rpx;
+}

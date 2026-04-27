@@ -1,0 +1,9 @@
+{
+  "name": "uploadCW",
+  "version": "1.0.0",
+  "description": "上传 CW 时序文本到云端",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

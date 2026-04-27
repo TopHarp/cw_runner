@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/play/play"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTitleText": "CW Runner",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#16213e"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
