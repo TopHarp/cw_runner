@@ -28,6 +28,11 @@
     </view>
   </view>
 
+  <!-- 调试模式提示 -->
+  <view class="debug-banner" wx:if="{{debugMode}}">
+    <text>本地调试模式</text>
+  </view>
+
   <!-- 中间：模拟报文列表 -->
   <view class="list-area">
     <view class="list-header">

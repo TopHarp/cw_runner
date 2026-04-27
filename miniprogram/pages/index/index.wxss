@@ -114,6 +114,20 @@
   text-align: right;
 }
 
+/* ==================== 调试模式提示 ==================== */
+
+.debug-banner {
+  background-color: #e94560;
+  padding: 12rpx 24rpx;
+  text-align: center;
+}
+
+.debug-banner text {
+  font-size: 24rpx;
+  color: #fff;
+  font-weight: 500;
+}
+
 /* ==================== 中间：模拟报文列表 ==================== */
 
 .list-area {

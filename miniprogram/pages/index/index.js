@@ -1,5 +1,6 @@
 const { PaddleKeyer, playCode } = require('../../utils/cw.js')
 const { uploadCW, getCWList } = require('../../utils/cloud.js')
+const { DEBUG_MODE } = require('../../utils/config.js')
 
 Page({
   data: {
@@ -9,7 +10,8 @@ Page({
     isLeftPressed: false,
     isRightPressed: false,
     playingId: '',
-    loading: false
+    loading: false,
+    debugMode: DEBUG_MODE
   },
 
   paddleKeyer: null,
@@ -29,8 +31,12 @@ Page({
       }
     })
 
-    // 加载云端列表
+    // 加载列表
     this.loadCWList()
+
+    if (DEBUG_MODE) {
+      console.log('[DEBUG] 当前为本地调试模式，云开发功能已关闭')
+    }
   },
 
   onUnload() {

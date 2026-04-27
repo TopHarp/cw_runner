@@ -1,9 +1,19 @@
 /**
  * 云开发封装工具
  * 负责：CW 文本上传、云端列表获取
+ * DEBUG_MODE 下使用本地 Mock 数据
  */
 
+const { DEBUG_MODE } = require('./config.js')
+
 const DB_NAME = 'cw_messages'
+
+// 本地调试用的 Mock 数据
+const MOCK_LIST = [
+  { _id: 'mock_1', code: '.-/-.../.-.', wpm: 20, timestamp: Math.floor(Date.now() / 1000) - 300 },
+  { _id: 'mock_2', code: '--./.-..', wpm: 18, timestamp: Math.floor(Date.now() / 1000) - 900 },
+  { _id: 'mock_3', code: '.../---/...', wpm: 25, timestamp: Math.floor(Date.now() / 1000) - 1800 }
+]
 
 /**
  * 上传 CW 时序文本到云端
@@ -29,6 +39,20 @@ function uploadCW(code, wpm = 20) {
     // 长度限制
     if (code.length > 500) {
       reject({ success: false, errMsg: '时序文本超过最大长度 500' })
+      return
+    }
+
+    // DEBUG 模式：模拟上传成功，写入本地 Mock
+    if (DEBUG_MODE) {
+      const mockItem = {
+        _id: 'mock_' + Date.now(),
+        code: code,
+        wpm: wpm,
+        timestamp: Math.floor(Date.now() / 1000)
+      }
+      MOCK_LIST.unshift(mockItem)
+      if (MOCK_LIST.length > 20) MOCK_LIST.pop()
+      resolve({ success: true, id: mockItem._id })
       return
     }
 
@@ -67,6 +91,15 @@ function uploadCW(code, wpm = 20) {
  */
 function getCWList(limit = 20, offset = 0) {
   return new Promise((resolve, reject) => {
+    // DEBUG 模式：返回本地 Mock 数据
+    if (DEBUG_MODE) {
+      resolve({
+        success: true,
+        list: MOCK_LIST.slice(offset, offset + limit)
+      })
+      return
+    }
+
     wx.cloud.callFunction({
       name: 'getCWList',
       data: {
@@ -100,6 +133,10 @@ function getCWList(limit = 20, offset = 0) {
  * @returns {Promise<Array>}
  */
 function getCWListDirect(limit = 20) {
+  if (DEBUG_MODE) {
+    return Promise.resolve(MOCK_LIST.slice(0, limit))
+  }
+
   const db = wx.cloud.database()
   return db.collection(DB_NAME)
     .orderBy('timestamp', 'desc')

@@ -1,10 +1,18 @@
+const { DEBUG_MODE } = require('./utils/config.js')
+
 App({
   globalData: {
     userInfo: null,
-    openid: ''
+    openid: '',
+    debugMode: DEBUG_MODE
   },
 
   onLaunch() {
+    if (DEBUG_MODE) {
+      console.log('[DEBUG] 本地调试模式，云开发已关闭')
+      return
+    }
+
     // 初始化云开发
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
@@ -20,6 +28,8 @@ App({
   },
 
   getOpenid() {
+    if (DEBUG_MODE) return
+
     wx.cloud.callFunction({
       name: 'getOpenid'
     }).then(res => {
