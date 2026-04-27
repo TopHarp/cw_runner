@@ -28,11 +28,6 @@
     </view>
   </view>
 
-  <!-- 调试模式提示 -->
-  <view class="debug-banner" wx:if="{{debugMode}}">
-    <text>本地调试模式</text>
-  </view>
-
   <!-- 本地模式提示 -->
   <view class="local-mode-banner" wx:if="{{!cloudEnabled}}">
     <text>本地模式（未开启云端存储）</text>

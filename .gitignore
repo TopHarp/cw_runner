@@ -1,0 +1,24 @@
+# Node.js
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# 微信小程序
+miniprogram_npm/
+*.wxss.map
+
+# 编辑器/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.temp
+

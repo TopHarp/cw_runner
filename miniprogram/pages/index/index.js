@@ -17,22 +17,28 @@ Page({
   paddleKeyer: null,
 
   onLoad() {
-    // 初始化 Paddle 自动键
-    this.paddleKeyer = new PaddleKeyer({
-      unitMs: 1200 / this.data.wpm,
-      onTimingUpdate: (text) => {
-        this.setData({ timingText: text })
-      },
-      onToneStart: (element) => {
-        // 音开始，可添加视觉反馈
-      },
-      onToneEnd: (element) => {
-        // 音结束
-      }
-    })
+    try {
+      // 初始化 Paddle 自动键
+      this.paddleKeyer = new PaddleKeyer({
+        unitMs: Math.round(1200 / this.data.wpm),
+        onTimingUpdate: (text) => {
+          this.setData({ timingText: text })
+        },
+        onToneStart: (element) => {
+          // 音开始，可添加视觉反馈
+        },
+        onToneEnd: (element) => {
+          // 音结束
+        }
+      })
+    } catch (err) {
+      console.error('PaddleKeyer 初始化失败', err)
+    }
 
-    // 加载列表
-    this.loadCWList()
+    // 加载列表（异步，不阻塞渲染）
+    this.loadCWList().catch(err => {
+      console.error('初始加载列表失败', err)
+    })
 
     if (!CLOUD_ENABLED) {
       console.log('[本地模式] 云端存储已关闭，报文仅保存到本地 Mock')
@@ -114,9 +120,9 @@ Page({
   loadCWList() {
     this.setData({ loading: true })
 
-    getCWList(20, 0)
+    return getCWList(20, 0)
       .then(res => {
-        const list = res.list.map(item => ({
+        const list = (res.list || []).map(item => ({
           ...item,
           timeStr: this.formatTime(item.timestamp)
         }))
@@ -127,8 +133,11 @@ Page({
       })
       .catch(err => {
         console.error('获取列表失败', err)
-        this.setData({ loading: false })
-        wx.showToast({ title: '获取列表失败', icon: 'none' })
+        this.setData({ 
+          cwList: [],
+          loading: false 
+        })
+        // 静默失败，不弹 toast 避免干扰首次渲染
       })
   },
 
