@@ -1,9 +1,9 @@
 /**
  * 全局配置
- * DEBUG_MODE: true 为本地调试模式，关闭云开发相关功能
+ * CLOUD_ENABLED: true 启用云端存储报文，false 使用本地 Mock（无云环境权限时调试用）
  */
-const DEBUG_MODE = true
+const CLOUD_ENABLED = false
 
 module.exports = {
-  DEBUG_MODE
+  CLOUD_ENABLED
 }

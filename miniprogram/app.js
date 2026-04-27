@@ -1,35 +1,31 @@
-const { DEBUG_MODE } = require('./utils/config.js')
+const { CLOUD_ENABLED } = require('./utils/config.js')
 
 App({
   globalData: {
     userInfo: null,
     openid: '',
-    debugMode: DEBUG_MODE
+    cloudEnabled: CLOUD_ENABLED
   },
 
   onLaunch() {
-    if (DEBUG_MODE) {
-      console.log('[DEBUG] 本地调试模式，云开发已关闭')
-      return
-    }
-
-    // 初始化云开发
-    if (!wx.cloud) {
-      console.error('请使用 2.2.3 或以上的基础库以使用云能力')
+    if (CLOUD_ENABLED) {
+      // 初始化云开发
+      if (!wx.cloud) {
+        console.error('请使用 2.2.3 或以上的基础库以使用云能力')
+      } else {
+        wx.cloud.init({
+          env: 'cw-runner-env',
+          traceUser: true
+        })
+      }
+      // 获取用户 openid
+      this.getOpenid()
     } else {
-      wx.cloud.init({
-        env: 'cw-runner-env',
-        traceUser: true
-      })
+      console.log('[本地模式] 云端存储已关闭，报文仅保存到本地 Mock')
     }
-
-    // 获取用户 openid
-    this.getOpenid()
   },
 
   getOpenid() {
-    if (DEBUG_MODE) return
-
     wx.cloud.callFunction({
       name: 'getOpenid'
     }).then(res => {

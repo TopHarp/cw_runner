@@ -1,10 +1,10 @@
 /**
  * 云开发封装工具
  * 负责：CW 文本上传、云端列表获取
- * DEBUG_MODE 下使用本地 Mock 数据
+ * CLOUD_ENABLED=false 时使用本地 Mock 数据（无云环境权限时调试用）
  */
 
-const { DEBUG_MODE } = require('./config.js')
+const { CLOUD_ENABLED } = require('./config.js')
 
 const DB_NAME = 'cw_messages'
 
@@ -16,7 +16,7 @@ const MOCK_LIST = [
 ]
 
 /**
- * 上传 CW 时序文本到云端
+ * 上传 CW 时序文本
  * @param {string} code - 时序文本
  * @param {number} wpm - 发报速度（默认 20）
  * @returns {Promise<{success: boolean, id?: string, errMsg?: string}>}
@@ -29,21 +29,19 @@ function uploadCW(code, wpm = 20) {
       return
     }
 
-    // 校验合法字符
     const validPattern = /^[.\-/|]+$/
     if (!validPattern.test(code)) {
       reject({ success: false, errMsg: '时序文本包含非法字符' })
       return
     }
 
-    // 长度限制
     if (code.length > 500) {
       reject({ success: false, errMsg: '时序文本超过最大长度 500' })
       return
     }
 
-    // DEBUG 模式：模拟上传成功，写入本地 Mock
-    if (DEBUG_MODE) {
+    // 本地模式：写入 Mock 数组
+    if (!CLOUD_ENABLED) {
       const mockItem = {
         _id: 'mock_' + Date.now(),
         code: code,
@@ -56,43 +54,32 @@ function uploadCW(code, wpm = 20) {
       return
     }
 
+    // 云端模式：调用云函数
     wx.cloud.callFunction({
       name: 'uploadCW',
-      data: {
-        code: code,
-        wpm: wpm
-      }
+      data: { code, wpm }
     }).then(res => {
       if (res.result && res.result.success) {
-        resolve({
-          success: true,
-          id: res.result.id
-        })
+        resolve({ success: true, id: res.result.id })
       } else {
-        reject({
-          success: false,
-          errMsg: res.result.errMsg || '上传失败'
-        })
+        reject({ success: false, errMsg: res.result.errMsg || '上传失败' })
       }
     }).catch(err => {
-      reject({
-        success: false,
-        errMsg: err.message || '网络错误'
-      })
+      reject({ success: false, errMsg: err.message || '网络错误' })
     })
   })
 }
 
 /**
- * 获取云端 CW 列表
+ * 获取 CW 列表
  * @param {number} limit - 每页数量（默认 20）
  * @param {number} offset - 偏移量（默认 0）
  * @returns {Promise<{success: boolean, list?: Array, errMsg?: string}>}
  */
 function getCWList(limit = 20, offset = 0) {
   return new Promise((resolve, reject) => {
-    // DEBUG 模式：返回本地 Mock 数据
-    if (DEBUG_MODE) {
+    // 本地模式：返回 Mock 数据
+    if (!CLOUD_ENABLED) {
       resolve({
         success: true,
         list: MOCK_LIST.slice(offset, offset + limit)
@@ -100,29 +87,18 @@ function getCWList(limit = 20, offset = 0) {
       return
     }
 
+    // 云端模式：调用云函数
     wx.cloud.callFunction({
       name: 'getCWList',
-      data: {
-        limit: limit,
-        offset: offset
-      }
+      data: { limit, offset }
     }).then(res => {
       if (res.result && res.result.success) {
-        resolve({
-          success: true,
-          list: res.result.list || []
-        })
+        resolve({ success: true, list: res.result.list || [] })
       } else {
-        reject({
-          success: false,
-          errMsg: res.result.errMsg || '获取列表失败'
-        })
+        reject({ success: false, errMsg: res.result.errMsg || '获取列表失败' })
       }
     }).catch(err => {
-      reject({
-        success: false,
-        errMsg: err.message || '网络错误'
-      })
+      reject({ success: false, errMsg: err.message || '网络错误' })
     })
   })
 }
@@ -133,7 +109,7 @@ function getCWList(limit = 20, offset = 0) {
  * @returns {Promise<Array>}
  */
 function getCWListDirect(limit = 20) {
-  if (DEBUG_MODE) {
+  if (!CLOUD_ENABLED) {
     return Promise.resolve(MOCK_LIST.slice(0, limit))
   }
 
