@@ -11,14 +11,15 @@ Page({
     isRightPressed: false,
     playingId: '',
     loading: false,
-    cloudEnabled: CLOUD_ENABLED
+    cloudEnabled: CLOUD_ENABLED,
+    audioReady: false
   },
 
   paddleKeyer: null,
 
-  onLoad() {
+  async onLoad() {
+    // 初始化 Paddle 自动键（等待音频文件加载）
     try {
-      // 初始化 Paddle 自动键
       this.paddleKeyer = new PaddleKeyer({
         unitMs: Math.round(1200 / this.data.wpm),
         onTimingUpdate: (text) => {
@@ -31,8 +32,12 @@ Page({
           // 音结束
         }
       })
+      // 等待音频初始化完成（新 cw.js 使用 init() 方法）
+      await this.paddleKeyer.init()
+      this.setData({ audioReady: true })
     } catch (err) {
       console.error('PaddleKeyer 初始化失败', err)
+      wx.showToast({ title: '音频加载失败', icon: 'none' })
     }
 
     // 加载列表（异步，不阻塞渲染）
@@ -54,21 +59,25 @@ Page({
   // ==================== Paddle 事件 ====================
 
   onLeftPress() {
+    if (!this.paddleKeyer || !this.paddleKeyer.isReady()) return
     this.setData({ isLeftPressed: true })
     this.paddleKeyer.pressLeft()
   },
 
   onLeftRelease() {
+    if (!this.paddleKeyer) return
     this.setData({ isLeftPressed: false })
     this.paddleKeyer.releaseLeft()
   },
 
   onRightPress() {
+    if (!this.paddleKeyer || !this.paddleKeyer.isReady()) return
     this.setData({ isRightPressed: true })
     this.paddleKeyer.pressRight()
   },
 
   onRightRelease() {
+    if (!this.paddleKeyer) return
     this.setData({ isRightPressed: false })
     this.paddleKeyer.releaseRight()
   },
@@ -79,12 +88,14 @@ Page({
     const newWpm = e.detail.value
     this.setData({ wpm: newWpm })
     if (this.paddleKeyer) {
-      this.paddleKeyer.unitMs = Math.round(1200 / newWpm)
+      this.paddleKeyer.updateWpm(newWpm)
     }
   },
 
   onClear() {
-    this.paddleKeyer.clear()
+    if (this.paddleKeyer) {
+      this.paddleKeyer.clear()
+    }
     this.setData({ timingText: '' })
   },
 
@@ -137,7 +148,6 @@ Page({
           cwList: [],
           loading: false 
         })
-        // 静默失败，不弹 toast 避免干扰首次渲染
       })
   },
 
@@ -162,7 +172,7 @@ Page({
 
   formatTime(timestamp) {
     if (!timestamp) return ''
-    const date = new Date(timestamp * 1000)
+    const date = new Date(timestamp)
     const now = new Date()
     const diff = Math.floor((now - date) / 1000)
 

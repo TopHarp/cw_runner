@@ -106,23 +106,35 @@ CW Runner 是一款面向业余无线电爱好者及 CW 学习者的微信小程
 #### 3.2.1 架构
 使用微信小程序内置的 Web Audio API 进行本地音频合成。
 
-#### 3.2.2 音频图
+#### 3.2.2 延迟优化策略
+
+| 优化点 | 原始方案 | 优化后方案 | 效果 |
+|--------|----------|-----------|------|
+| 音频生成 | 每次按键实时创建 Oscillator + GainNode | 预生成 `AudioBuffer`（`OfflineAudioContext` 渲染） | 消除实时合成开销 |
+| 按键到发声 | 通过 JS 逻辑层调度 | `touchstart` → 直接 `playBuffer()` | 延迟降至 5ms 内 |
+| 连续点划 | 嵌套 `setTimeout` 累积误差 | `AudioContext.currentTime` 时间轴精确调度 | 消除累积误差 |
+
+**为什么不采用 Base64 预生成音频？**
+
+微信小程序不支持直接播放 Base64 音频 Buffer。`wx.createInnerAudioContext()` 需要物理文件路径，Base64 解码后仍需写入临时文件，反而增加 I/O 延迟。`AudioBuffer` 是内存中的原始 PCM 数据，通过 `createBufferSource()` 直接播放，延迟最低。
+
+#### 3.2.3 音频图（播放预生成 Buffer）
 
 ```
-+----------+    +----------+    +----------+    +----------+
-|Oscillator|--->| GainNode |--->| GainNode |--->|AudioDestination|
-| (600Hz)  |    |(Envelope)|    | (Volume) |    |  (扬声器)      |
-+----------+    +----------+    +----------+    +----------+
++---------------+    +----------+
+| BufferSource  |--->|AudioDestination|
+| (预生成 dit/dah) |    |  (扬声器)      |
++---------------+    +----------+
 ```
 
-#### 3.2.3 包络设计
-采用快速 Attack / Decay 避免爆音：
-- Attack: 5ms
-- Decay: 5ms
-- Sustain: 目标音量
-- Release: 5ms
+#### 3.2.4 包络设计
 
-#### 3.2.4 播放解析规则（按实际 WPM）
+预生成阶段在 `OfflineAudioContext` 中计算好包络：
+- Attack: 5ms（线性淡入）
+- Release: 5ms（线性淡出）
+- Sustain: 峰值音量 0.3
+
+#### 3.2.5 播放解析规则（按实际 WPM）
 
 遍历 `code` 字符串，按以下规则生成音频事件。所有时长按 `speedRatio = 20 / wpm` 比例缩放：
 
@@ -151,8 +163,6 @@ CW Runner 是一款面向业余无线电爱好者及 CW 学习者的微信小程
 
 #### 3.3.1 数据模型
 
-#### 3.3.1 数据模型
-
 ```json
 {
   "_id": "云数据库自动生成的ID",
@@ -172,11 +182,16 @@ CW Runner 是一款面向业余无线电爱好者及 CW 学习者的微信小程
 | `timestamp` | Number | 创建时间 Unix 时间戳 |
 | `sender` | String | 发送者匿名标识（openid 前 16 位） |
 
-#### 3.3.3 接口（云端模式）
+#### 3.3.3 自动过期策略
+
+报文存储 5 分钟后自动删除：
+- 实现方式：被动清理（每次 `getCWList` 查询时，先删除 `timestamp < now - 300s` 的记录）
+- 原因：微信云开发无内置 Cron 定时任务
+- 效果：列表中永远只显示最近 5 分钟的报文
+
+#### 3.3.4 接口（云端模式）
 
 > 本地模式时，uploadCW / getCWList 直接操作内存 Mock 数组，不走云函数。
-
-**uploadCW**
 
 **uploadCW**
 - 参数：`{ code: string, wpm: number }`
@@ -199,7 +214,7 @@ CW Runner 是一款面向业余无线电爱好者及 CW 学习者的微信小程
 - 返回：`{ openid: string }`
 - 仅云端模式使用
 
-#### 3.3.4 匿名策略
+#### 3.3.5 匿名策略
 - 服务端存储 `sender` 字段用于去重或反垃圾，但绝不返回给客户端
 - 客户端列表仅展示 `code`、`wpm`、`timestamp`
 - 用户无法知道某条 CW 是谁发的
@@ -357,10 +372,11 @@ cw_runner/
 
 ### 8.1 已实现功能
 - ✅ 虚拟 Paddle 自动键（dit/dah，Iambic B）
-- ✅ Web Audio 600Hz 正弦波合成
+- ✅ Web Audio 600Hz 正弦波合成（预生成 AudioBuffer，低延迟）
 - ✅ WPM 5-40 可调（发报与播放均支持）
 - ✅ 时序文本实时显示
 - ✅ 云端异步存储与列表展示（可开关）
+- ✅ 报文 5 分钟自动过期删除
 - ✅ 匿名机制（不暴露 sender）
 - ✅ 本地 Mock 模式（无云环境时调试）
 

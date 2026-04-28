@@ -1,13 +1,23 @@
-const { playCode } = require('../../utils/cw.js')
+const { playCode, initAudioFiles, isAudioReady } = require('../../utils/cw.js')
 
 Page({
   data: {
     code: '',
     wpm: 20,
-    isPlaying: false
+    isPlaying: false,
+    audioReady: false
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 预加载音频
+    try {
+      await initAudioFiles()
+      this.setData({ audioReady: true })
+    } catch (err) {
+      console.error('音频加载失败', err)
+      wx.showToast({ title: '音频加载失败', icon: 'none' })
+    }
+
     if (options.code) {
       this.setData({
         code: decodeURIComponent(options.code),
@@ -20,9 +30,20 @@ Page({
     this.setData({ wpm: e.detail.value })
   },
 
-  onPlay() {
+  async onPlay() {
     const { code, wpm, isPlaying } = this.data
     if (!code || isPlaying) return
+
+    // 确保音频已就绪
+    if (!isAudioReady()) {
+      try {
+        await initAudioFiles()
+        this.setData({ audioReady: true })
+      } catch (err) {
+        wx.showToast({ title: '音频未就绪', icon: 'none' })
+        return
+      }
+    }
 
     this.setData({ isPlaying: true })
 
