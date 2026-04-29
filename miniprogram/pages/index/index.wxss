@@ -45,6 +45,23 @@
   line-height: 1.5;
 }
 
+.btn-delete {
+  font-size: 26rpx;
+  padding: 10rpx 24rpx;
+  background-color: #0f3460;
+  color: #e94560;
+  border: 2rpx solid #e94560;
+  border-radius: 8rpx;
+  line-height: 1.5;
+}
+.btn-delete::after {
+  border: none;
+}
+.btn-delete:active {
+  opacity: 0.7;
+}
+
+
 .btn-clear::after {
   border: none;
 }
@@ -175,55 +192,49 @@
 
 .cw-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   background-color: #0f3460;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 16rpx;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 12rpx;
+  gap: 16rpx;
 }
 
-.cw-content {
-  flex: 1;
-  min-width: 0;
-  margin-right: 20rpx;
-}
-
-.cw-code {
-  font-family: 'Courier New', monospace;
-  font-size: 32rpx;
-  color: #00d9ff;
-  word-break: break-all;
-  line-height: 1.4;
-}
-
-.cw-meta {
-  display: flex;
-  gap: 20rpx;
-  margin-top: 12rpx;
-}
-
-.cw-wpm {
+.cw-index {
   font-size: 24rpx;
   color: #e94560;
-  background-color: rgba(233, 69, 96, 0.15);
-  padding: 4rpx 12rpx;
-  border-radius: 6rpx;
+  font-weight: 600;
+  min-width: 40rpx;
+  text-align: center;
 }
 
 .cw-time {
   font-size: 24rpx;
   color: #a0a0a0;
+  min-width: 120rpx;
+  flex-shrink: 0;
+}
+
+.cw-code {
+  font-family: 'Courier New', monospace;
+  font-size: 28rpx;
+  color: #00d9ff;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200rpx; /* 限制宽度，确保只显示约8个字符 */
 }
 
 .btn-play {
   flex-shrink: 0;
-  font-size: 26rpx;
-  padding: 16rpx 32rpx;
+  font-size: 32rpx;
+  padding: 8rpx 20rpx;
   background-color: #e94560;
   color: #fff;
-  border-radius: 12rpx;
-  line-height: 1.5;
+  border-radius: 8rpx;
+  line-height: 1.2;
+  min-width: 80rpx;
 }
 
 .btn-play::after {

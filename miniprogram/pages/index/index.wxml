@@ -4,8 +4,8 @@
     <view class="display-header">
       <text class="display-title">时序记录</text>
       <view class="display-actions">
-        <button class="btn-clear" bindtap="onClear">清空</button>
         <button class="btn-send {{timingText.length > 0 ? 'active' : ''}}" bindtap="onSend">保存</button>
+        <button class="btn-delete" bindtap="onDelete">删除</button>
       </view>
     </view>
     <scroll-view class="timing-scroll" scroll-y enhanced show-scrollbar>
@@ -42,19 +42,15 @@
     <scroll-view class="list-scroll" scroll-y enhanced show-scrollbar>
       <block wx:if="{{cwList.length > 0}}">
         <view class="cw-item" wx:for="{{cwList}}" wx:key="_id">
-          <view class="cw-content">
-            <text class="cw-code">{{item.code}}</text>
-            <view class="cw-meta">
-              <text class="cw-wpm">{{item.wpm}} WPM</text>
-              <text class="cw-time">{{item.timeStr}}</text>
-            </view>
-          </view>
+          <text class="cw-index">{{index + 1}}</text>
+          <text class="cw-time">{{item.timeStr}}</text>
+          <text class="cw-code">{{item.code}}</text>
           <button class="btn-play {{playingId === item._id ? 'playing' : ''}}" 
                   bindtap="onPlay" 
                   data-id="{{item._id}}"
                   data-code="{{item.code}}"
                   data-wpm="{{item.wpm}}">
-            {{playingId === item._id ? '播放中...' : '播放'}}
+            {{playingId === item._id ? '▶...' : '▶'}}
           </button>
         </view>
       </block>

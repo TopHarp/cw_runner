@@ -99,6 +99,20 @@ Page({
     this.setData({ timingText: '' })
   },
 
+  onDelete() {
+    if (!this.data.timingText || this.data.timingText.length === 0) {
+      return
+    }
+    const newText = this.data.timingText.slice(0, -1)
+    this.paddleKeyer.clear()
+    this.setData({ timingText: newText })
+    // 恢复已删除字符前的时序状态
+    if (this.paddleKeyer && this.paddleKeyer.restoreTiming) {
+      this.paddleKeyer.restoreTiming(newText)
+    }
+  },
+
+
   onSend() {
     const { timingText, wpm } = this.data
     if (!timingText || timingText.length === 0) {
