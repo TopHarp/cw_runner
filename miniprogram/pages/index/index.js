@@ -104,12 +104,13 @@ Page({
       return
     }
     const newText = this.data.timingText.slice(0, -1)
-    this.paddleKeyer.clear()
-    this.setData({ timingText: newText })
-    // 恢复已删除字符前的时序状态
-    if (this.paddleKeyer && this.paddleKeyer.restoreTiming) {
+    // 取消可能存在的间隔定时器
+    if (this.paddleKeyer) {
+      this.paddleKeyer._cancelGapTimer()
+      // 恢复删除后的时序文本
       this.paddleKeyer.restoreTiming(newText)
     }
+    this.setData({ timingText: newText })
   },
 
 

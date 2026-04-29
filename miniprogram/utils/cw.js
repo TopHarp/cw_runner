@@ -233,6 +233,11 @@ class PaddleKeyer {
     this.onTimingUpdate('')
   }
 
+  restoreTiming(text) {
+    this.timingText = text
+    this.onTimingUpdate(text)
+  }
+
   _scheduleTransmit() {
     if (this.isTransmitting) return
     this._transmitNext()
