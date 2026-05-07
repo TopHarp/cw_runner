@@ -188,6 +188,7 @@
 
 .list-scroll {
   flex: 1;
+  height: 0;
 }
 
 .cw-item {
@@ -256,6 +257,25 @@
   padding: 60rpx 0;
   color: #555;
   font-size: 28rpx;
+}
+
+/* 加载更多 */
+.load-more {
+  text-align: center;
+  padding: 24rpx 0 40rpx;
+}
+
+.load-more-text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.load-more-text.loading {
+  color: #e94560;
+}
+
+.load-more-text.no-more {
+  color: #444;
 }
 
 /* ==================== 下半区：Paddle 电键 ==================== */

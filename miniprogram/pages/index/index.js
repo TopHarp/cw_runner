@@ -12,7 +12,12 @@ Page({
     playingId: '',
     loading: false,
     cloudEnabled: CLOUD_ENABLED,
-    audioReady: false
+    audioReady: false,
+    // 分页相关
+    pageOffset: 0,
+    hasMore: true,
+    loadMoreStatus: '',
+    loadMoreText: ''
   },
 
   paddleKeyer: null,
@@ -41,7 +46,7 @@ Page({
     }
 
     // 加载列表（异步，不阻塞渲染）
-    this.loadCWList().catch(err => {
+    this.loadCWList(false).catch(err => {
       console.error('初始加载列表失败', err)
     })
 
@@ -129,7 +134,7 @@ Page({
         wx.showToast({ title: '保存成功', icon: 'success' })
         this.paddleKeyer.clear()
         this.setData({ timingText: '' })
-        this.loadCWList()
+        this.loadCWList(false)
       })
       .catch(err => {
         wx.hideLoading()
@@ -140,29 +145,64 @@ Page({
   // ==================== 列表操作 ====================
 
   onRefresh() {
-    this.loadCWList()
+    this.loadCWList(false)
   },
 
-  loadCWList() {
-    this.setData({ loading: true })
+  onLoadMore() {
+    if (!this.data.hasMore || this.data.loadMoreStatus === 'loading') {
+      return
+    }
+    this.loadCWList(true)
+  },
 
-    return getCWList(20, 0)
+  loadCWList(isAppend = false) {
+    const offset = isAppend ? this.data.pageOffset : 0
+
+    if (!isAppend) {
+      this.setData({ loading: true })
+    } else {
+      this.setData({ loadMoreStatus: 'loading', loadMoreText: '加载中...' })
+    }
+
+    return getCWList(20, offset)
       .then(res => {
-        const list = (res.list || []).map(item => ({
+        const newList = (res.list || []).map(item => ({
           ...item,
           timeStr: this.formatTime(item.timestamp)
         }))
+
+        const cwList = isAppend
+          ? [...this.data.cwList, ...newList]
+          : newList
+
+        const hasMore = newList.length === 20
+
         this.setData({
-          cwList: list,
-          loading: false
+          cwList,
+          pageOffset: offset + newList.length,
+          hasMore,
+          loading: false,
+          loadMoreStatus: hasMore ? '' : 'no-more',
+          loadMoreText: hasMore ? '' : '没有更多了'
         })
       })
       .catch(err => {
         console.error('获取列表失败', err)
-        this.setData({ 
-          cwList: [],
-          loading: false 
-        })
+        if (!isAppend) {
+          this.setData({
+            cwList: [],
+            loading: false,
+            pageOffset: 0,
+            hasMore: true,
+            loadMoreStatus: '',
+            loadMoreText: ''
+          })
+        } else {
+          this.setData({
+            loadMoreStatus: '',
+            loadMoreText: '加载失败，请重试'
+          })
+        }
       })
   },
 

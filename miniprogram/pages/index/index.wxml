@@ -39,7 +39,7 @@
       <text class="list-title">模拟报文</text>
       <button class="btn-refresh" bindtap="onRefresh">刷新</button>
     </view>
-    <scroll-view class="list-scroll" scroll-y enhanced show-scrollbar>
+    <scroll-view class="list-scroll" scroll-y enhanced show-scrollbar bindscrolltolower="onLoadMore" lower-threshold="100">
       <block wx:if="{{cwList.length > 0}}">
         <view class="cw-item" wx:for="{{cwList}}" wx:key="_id">
           <text class="cw-index">{{index + 1}}</text>
@@ -56,6 +56,9 @@
       </block>
       <view class="list-empty" wx:else>
         <text>暂无报文</text>
+      </view>
+      <view class="load-more" wx:if="{{cwList.length > 0}}">
+        <text class="load-more-text {{loadMoreStatus}}">{{loadMoreText}}</text>
       </view>
     </scroll-view>
   </view>
