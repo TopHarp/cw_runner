@@ -1,4 +1,4 @@
-const { PaddleKeyer, playCode, setAudioEnabled } = require('../../utils/cw.js')
+const { PaddleKeyer, playCode, setAudioEnabled, activateAudio } = require('../../utils/cw.js')
 const { uploadCW, getCWList } = require('../../utils/cloud.js')
 const { CLOUD_ENABLED } = require('../../utils/config.js')
 
@@ -26,6 +26,7 @@ Page({
   },
 
   paddleKeyer: null,
+  audioActivated: false,
 
   async onLoad() {
     // 初始化 Paddle 自动键（等待音频文件加载）
@@ -77,8 +78,18 @@ Page({
 
   onLeftPress() {
     if (!this.paddleKeyer || !this.paddleKeyer.isReady()) return
+    this._ensureAudioActivated()
     this.setData({ isLeftPressed: true })
     this.paddleKeyer.pressLeft()
+  },
+
+  _ensureAudioActivated() {
+    if (this.audioActivated) return
+    this.audioActivated = true
+    activateAudio().catch(err => {
+      console.error('音频激活失败', err)
+      this.audioActivated = false
+    })
   },
 
   onLeftRelease() {
@@ -89,8 +100,13 @@ Page({
 
   onRightPress() {
     if (!this.paddleKeyer || !this.paddleKeyer.isReady()) return
+    this._ensureAudioActivated()
     this.setData({ isRightPressed: true })
     this.paddleKeyer.pressRight()
+  },
+
+  onFirstTouch() {
+    this._ensureAudioActivated()
   },
 
   onRightRelease() {

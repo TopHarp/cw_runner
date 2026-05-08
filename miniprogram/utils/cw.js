@@ -53,13 +53,6 @@ function initAudio() {
   })
 }
 
-// 确保音频上下文已激活（需要用户交互后才能从 suspended 变为 running）
-function ensureRunning() {
-  if (audioCtx && audioCtx.state === 'suspended') {
-    audioCtx.resume()
-  }
-}
-
 function isAudioReady() {
   return _audioReady
 }
@@ -75,11 +68,28 @@ function isAudioEnabled() {
 // 兼容旧接口名
 const initAudioFiles = initAudio
 
+/**
+ * 显式激活音频上下文
+ * 必须由用户手势触发调用（如触摸事件），并 await 其完成
+ * 之后上下文保持 running，playTone 不再涉及异步
+ */
+async function activateAudio() {
+  if (!_audioReady) {
+    await initAudio()
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    await audioCtx.resume()
+  }
+}
+
 // ==================== 音频播放 ====================
 
 function playTone(type) {
   if (!_audioReady || !_audioEnabled) return
-  ensureRunning()
+  // 尽力而为，不阻塞。正常情况下上下文已由 activateAudio() 提前激活
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume()
+  }
   // 取消任何预设的增益调度（防止 playCode 的残留调度干扰）
   if (gainNode) {
     gainNode.gain.cancelScheduledValues(audioCtx.currentTime)
@@ -127,7 +137,10 @@ function playCode(code, wpm = 20) {
       return
     }
 
-    ensureRunning()
+    // 尽力而为，不阻塞
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume()
+    }
 
     const unitSec = unitMs / 1000
     let t = audioCtx.currentTime
@@ -349,5 +362,6 @@ module.exports = {
   isAudioReady,
   setAudioEnabled,
   isAudioEnabled,
+  activateAudio,
   PaddleKeyer
 }

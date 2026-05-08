@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container" bindtouchstart="onFirstTouch">
   <!-- 上半区：实时时序显示 -->
   <view class="display-area">
     <view class="display-header">
