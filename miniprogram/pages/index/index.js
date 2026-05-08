@@ -1,4 +1,4 @@
-const { PaddleKeyer, playCode } = require('../../utils/cw.js')
+const { PaddleKeyer, playCode, setAudioEnabled } = require('../../utils/cw.js')
 const { uploadCW, getCWList } = require('../../utils/cloud.js')
 const { CLOUD_ENABLED } = require('../../utils/config.js')
 
@@ -20,7 +20,9 @@ Page({
     loadMoreText: '',
     // 视觉反馈
     flashDit: false,
-    flashDah: false
+    flashDah: false,
+    // 侧音开关
+    audioEnabled: false
   },
 
   paddleKeyer: null,
@@ -48,6 +50,7 @@ Page({
       })
       // 等待音频初始化完成（新 cw.js 使用 init() 方法）
       await this.paddleKeyer.init()
+      setAudioEnabled(false) // 默认静音
       this.setData({ audioReady: true })
     } catch (err) {
       console.error('PaddleKeyer 初始化失败', err)
@@ -104,6 +107,12 @@ Page({
     if (this.paddleKeyer) {
       this.paddleKeyer.updateWpm(newWpm)
     }
+  },
+
+  onAudioToggle() {
+    const newState = !this.data.audioEnabled
+    setAudioEnabled(newState)
+    this.setData({ audioEnabled: newState })
   },
 
   onClear() {

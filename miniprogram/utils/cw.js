@@ -16,6 +16,7 @@ let audioCtx = null
 let oscillator = null
 let gainNode = null
 let _audioReady = false
+let _audioEnabled = false
 
 function initAudio() {
   return new Promise((resolve, reject) => {
@@ -63,16 +64,21 @@ function isAudioReady() {
   return _audioReady
 }
 
+function setAudioEnabled(enabled) {
+  _audioEnabled = !!enabled
+}
+
+function isAudioEnabled() {
+  return _audioEnabled
+}
+
 // 兼容旧接口名
 const initAudioFiles = initAudio
 
 // ==================== 音频播放 ====================
 
 function playTone(type) {
-  if (!_audioReady) {
-    console.warn('音频未就绪')
-    return
-  }
+  if (!_audioReady || !_audioEnabled) return
   ensureRunning()
   // 取消任何预设的增益调度（防止 playCode 的残留调度干扰）
   if (gainNode) {
@@ -100,9 +106,30 @@ function playCode(code, wpm = 20) {
       return
     }
 
+    const unitMs = Math.round(1200 / wpm)
+    let totalMs = 0
+
+    // 计算总时长（无论是否静音都需要）
+    for (let i = 0; i < code.length; i++) {
+      const char = code[i]
+      switch (char) {
+        case '.': totalMs += unitMs * 2; break
+        case '-': totalMs += unitMs * 4; break
+        case '/': totalMs += unitMs * 2; break
+        case '|': totalMs += unitMs * 6; break
+        default: break
+      }
+    }
+
+    if (!_audioEnabled) {
+      // 静音模式：只等待对应时长后 resolve
+      setTimeout(resolve, totalMs + 50)
+      return
+    }
+
     ensureRunning()
 
-    const unitSec = Math.round(1200 / wpm) / 1000
+    const unitSec = unitMs / 1000
     let t = audioCtx.currentTime
     const startTime = t
 
@@ -138,7 +165,6 @@ function playCode(code, wpm = 20) {
       }
     }
 
-    const totalMs = (t - startTime) * 1000
     setTimeout(resolve, totalMs + 50)
   })
 }
@@ -321,5 +347,7 @@ module.exports = {
   playCode,
   initAudioFiles,
   isAudioReady,
+  setAudioEnabled,
+  isAudioEnabled,
   PaddleKeyer
 }
