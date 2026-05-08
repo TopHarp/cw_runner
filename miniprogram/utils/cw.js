@@ -1,7 +1,7 @@
 /**
  * CW 音频核心工具
- * 采用本地预生成音频文件方案
- * 音频文件路径: /assets/audio/dit.wav, /assets/audio/dah.wav
+ * 采用 WebAudio API 实时合成方案
+ * 振荡器持续运行，通过增益节点控制发声/静音，延迟 < 1ms
  */
 
 // ==================== 常量定义 ====================
@@ -10,99 +10,85 @@ const UNIT_MS = 60
 const DASH_MS = UNIT_MS * 3
 const TONE_FREQ = 600
 
-// ==================== 音频播放器池 ====================
+// ==================== WebAudio 实时合成 ====================
 
-const audioPool = []
-const POOL_SIZE = 4
-
-let ditSrc = ''
-let dahSrc = ''
+let audioCtx = null
+let oscillator = null
+let gainNode = null
 let _audioReady = false
 
-function initAudioPool() {
-  if (audioPool.length > 0) return
-  for (let i = 0; i < POOL_SIZE; i++) {
-    const audio = wx.createInnerAudioContext({
-      useWebAudioImplement: true
-    })
-    audioPool.push(audio)
-  }
-}
-
-let poolIndex = 0
-
-function getAudioPlayer() {
-  initAudioPool()
-  const audio = audioPool[poolIndex]
-  poolIndex = (poolIndex + 1) % POOL_SIZE
-  return audio
-}
-
-// ==================== 音频预加载 ====================
-
-/**
- * 预加载本地音频文件到播放器
- * 小程序启动时调用一次即可
- */
-function initAudioFiles() {
+function initAudio() {
   return new Promise((resolve, reject) => {
     if (_audioReady) {
       resolve()
       return
     }
 
-    ditSrc = '/assets/audio/dit.wav'
-    dahSrc = '/assets/audio/dah.wav'
+    if (!wx.createWebAudioContext) {
+      reject(new Error('当前基础库不支持 WebAudio，请升级微信'))
+      return
+    }
 
-    // 验证文件可加载
-    const testAudio = wx.createInnerAudioContext({ useWebAudioImplement: true })
-    let loaded = false
+    try {
+      audioCtx = wx.createWebAudioContext()
 
-    testAudio.src = ditSrc
-    testAudio.onCanplay(() => {
-      if (!loaded) {
-        loaded = true
-        _audioReady = true
-        testAudio.destroy()
-        resolve()
-      }
-    })
-    testAudio.onError((err) => {
-      console.error('音频加载失败', err)
+      oscillator = audioCtx.createOscillator()
+      oscillator.type = 'sine'
+      oscillator.frequency.value = TONE_FREQ
+
+      gainNode = audioCtx.createGain()
+      gainNode.gain.value = 0 // 初始静音
+
+      oscillator.connect(gainNode)
+      gainNode.connect(audioCtx.destination)
+
+      oscillator.start(0)
+      _audioReady = true
+      resolve()
+    } catch (err) {
+      console.error('WebAudio 初始化失败', err)
       reject(err)
-    })
-
-    // 超时保护
-    setTimeout(() => {
-      if (!loaded) {
-        testAudio.destroy()
-        reject(new Error('音频加载超时'))
-      }
-    }, 5000)
+    }
   })
+}
+
+// 确保音频上下文已激活（需要用户交互后才能从 suspended 变为 running）
+function ensureRunning() {
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume()
+  }
 }
 
 function isAudioReady() {
   return _audioReady
 }
 
+// 兼容旧接口名
+const initAudioFiles = initAudio
+
 // ==================== 音频播放 ====================
 
 function playTone(type) {
-  const src = type === 'dit' ? ditSrc : dahSrc
-  if (!src || !_audioReady) {
+  if (!_audioReady) {
     console.warn('音频未就绪')
     return
   }
+  ensureRunning()
+  // 取消任何预设的增益调度（防止 playCode 的残留调度干扰）
+  if (gainNode) {
+    gainNode.gain.cancelScheduledValues(audioCtx.currentTime)
+    gainNode.gain.value = 1
+  }
+}
 
-  const audio = getAudioPlayer()
-  audio.src = src
-  audio.seek(0)
-  audio.play()
+function stopTone() {
+  if (!_audioReady || !gainNode) return
+  gainNode.gain.value = 0
 }
 
 /**
  * 播放完整 CW 电码时序
+ * 使用 setValueAtTime 精确调度，由音频硬件时钟驱动，精度微秒级
  * @param {string} code - 如 ".-/-.../.-."
  * @param {number} wpm - 发报速度
  */
@@ -114,40 +100,46 @@ function playCode(code, wpm = 20) {
       return
     }
 
-    const unitMs = Math.round(1200 / wpm)
-    let currentTime = 0
-    const schedule = []
+    ensureRunning()
+
+    const unitSec = Math.round(1200 / wpm) / 1000
+    let t = audioCtx.currentTime
+    const startTime = t
+
+    // 取消之前的调度，从当前时间重新开始
+    gainNode.gain.cancelScheduledValues(t)
+    gainNode.gain.setValueAtTime(0, t)
 
     for (let i = 0; i < code.length; i++) {
       const char = code[i]
       switch (char) {
         case '.':
-          schedule.push({ type: 'dit', time: currentTime })
-          currentTime += unitMs + unitMs  // 音长 + 间隔
+          // 点：发声 unitSec，静音 unitSec
+          gainNode.gain.setValueAtTime(1, t)
+          gainNode.gain.setValueAtTime(0, t + unitSec)
+          t += unitSec * 2
           break
         case '-':
-          schedule.push({ type: 'dah', time: currentTime })
-          currentTime += unitMs * 3 + unitMs
+          // 划：发声 3*unitSec，静音 unitSec
+          gainNode.gain.setValueAtTime(1, t)
+          gainNode.gain.setValueAtTime(0, t + unitSec * 3)
+          t += unitSec * 4
           break
         case '/':
-          currentTime += unitMs * 2  // 字母间隔额外 2unit (已有1unit在音后)
+          // 字母间隔：额外静音 2*unitSec
+          t += unitSec * 2
           break
         case '|':
-          currentTime += unitMs * 6  // 单词间隔额外 6unit
+          // 单词间隔：额外静音 6*unitSec
+          t += unitSec * 6
           break
         default:
           break
       }
     }
 
-    const startTime = Date.now()
-    schedule.forEach(item => {
-      setTimeout(() => {
-        playTone(item.type)
-      }, item.time)
-    })
-
-    setTimeout(resolve, currentTime + 50)
+    const totalMs = (t - startTime) * 1000
+    setTimeout(resolve, totalMs + 50)
   })
 }
 
@@ -176,8 +168,7 @@ class PaddleKeyer {
 
   async init() {
     try {
-      initAudioPool()
-      await initAudioFiles()
+      await initAudio()
       this._ready = true
     } catch (err) {
       console.error('音频初始化失败', err)
@@ -186,7 +177,6 @@ class PaddleKeyer {
 
   async updateWpm(wpm) {
     this.unitMs = Math.round(1200 / wpm)
-    // 音频文件本身不变，只改变时序间隔
   }
 
   isReady() {
@@ -231,6 +221,7 @@ class PaddleKeyer {
     this.isTransmitting = false
     this.currentElement = null
     this.onTimingUpdate('')
+    stopTone()
   }
 
   restoreTiming(text) {
@@ -276,6 +267,7 @@ class PaddleKeyer {
 
     setTimeout(() => {
       this.onToneEnd(element)
+      stopTone()
       // 点划间隔 1 unit
       setTimeout(() => {
         this._transmitNext()
