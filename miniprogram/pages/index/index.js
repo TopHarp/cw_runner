@@ -17,7 +17,10 @@ Page({
     pageOffset: 0,
     hasMore: true,
     loadMoreStatus: '',
-    loadMoreText: ''
+    loadMoreText: '',
+    // 视觉反馈
+    flashDit: false,
+    flashDah: false
   },
 
   paddleKeyer: null,
@@ -31,10 +34,16 @@ Page({
           this.setData({ timingText: text })
         },
         onToneStart: (element) => {
-          // 音开始，可添加视觉反馈
+          this.setData({
+            flashDit: element === 'dit',
+            flashDah: element === 'dah'
+          })
         },
         onToneEnd: (element) => {
-          // 音结束
+          this.setData({
+            flashDit: false,
+            flashDah: false
+          })
         }
       })
       // 等待音频初始化完成（新 cw.js 使用 init() 方法）
@@ -101,7 +110,7 @@ Page({
     if (this.paddleKeyer) {
       this.paddleKeyer.clear()
     }
-    this.setData({ timingText: '' })
+    this.setData({ timingText: '', flashDit: false, flashDah: false })
   },
 
   onDelete() {

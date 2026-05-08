@@ -278,6 +278,55 @@
   color: #444;
 }
 
+/* ==================== Paddle 视觉反馈 ==================== */
+
+.paddle-flash-area {
+  display: flex;
+  justify-content: center;
+  gap: 120rpx;
+  margin-bottom: 16rpx;
+  height: 72rpx;
+  align-items: center;
+}
+
+.flash-left,
+.flash-right {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  opacity: 0;
+  transition: all 0.03s;
+}
+
+.flash-left.active {
+  opacity: 1;
+  background-color: rgba(0, 217, 255, 0.25);
+  box-shadow: 0 0 24rpx rgba(0, 217, 255, 0.5);
+}
+
+.flash-right.active {
+  opacity: 1;
+  background-color: rgba(233, 69, 96, 0.25);
+  box-shadow: 0 0 24rpx rgba(233, 69, 96, 0.5);
+}
+
+.flash-symbol {
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.flash-left .flash-symbol {
+  color: #00d9ff;
+}
+
+.flash-right .flash-symbol {
+  color: #e94560;
+}
+
 /* ==================== 下半区：Paddle 电键 ==================== */
 
 .paddle-area {

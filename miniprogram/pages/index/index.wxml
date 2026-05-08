@@ -68,6 +68,14 @@
     <view class="paddle-hint">
       <text>左桨: 点(dit) · 右桨: 划(dah)</text>
     </view>
+    <view class="paddle-flash-area">
+      <view class="flash-left {{flashDit ? 'active' : ''}}">
+        <text class="flash-symbol">·</text>
+      </view>
+      <view class="flash-right {{flashDah ? 'active' : ''}}">
+        <text class="flash-symbol">−</text>
+      </view>
+    </view>
     <view class="paddle-buttons">
       <button class="paddle-left {{isLeftPressed ? 'pressed' : ''}}"
               bindtouchstart="onLeftPress"
