@@ -9,6 +9,7 @@
 const UNIT_MS = 60
 const DASH_MS = UNIT_MS * 3
 const TONE_FREQ = 600
+const WORD_GAP_UNITS = 4  // 单词间隔 = 4 * unit，可调
 
 // ==================== WebAudio 实时合成 ====================
 
@@ -126,7 +127,7 @@ function playCode(code, wpm = 20) {
         case '.': totalMs += unitMs * 2; break
         case '-': totalMs += unitMs * 4; break
         case '/': totalMs += unitMs * 2; break
-        case '|': totalMs += unitMs * 6; break
+        case '|': totalMs += unitMs * (WORD_GAP_UNITS - 1); break
         default: break
       }
     }
@@ -166,12 +167,12 @@ function playCode(code, wpm = 20) {
           t += unitSec * 4
           break
         case '/':
-          // 字母间隔：额外静音 2*unitSec
+          // 兼容旧数据：原字母间隔，额外静音 2*unitSec
           t += unitSec * 2
           break
         case '|':
-          // 单词间隔：额外静音 6*unitSec
-          t += unitSec * 6
+          // 单词间隔：额外静音 (WORD_GAP_UNITS - 1)*unitSec
+          t += unitSec * (WORD_GAP_UNITS - 1)
           break
         default:
           break
@@ -318,14 +319,10 @@ class PaddleKeyer {
     this.lastReleaseTime = Date.now()
     this._cancelGapTimer()
 
-    // 3 unit 后加字母间隔 /
+    // WORD_GAP_UNITS * unit 后加单词间隔 |
     this.gapTimer = setTimeout(() => {
-      this._appendCharGap()
-      // 再 4 unit 后（共7 unit）加单词间隔 |
-      this.gapTimer = setTimeout(() => {
-        this._appendWordGap()
-      }, this.unitMs * 4)
-    }, this.unitMs * 3)
+      this._appendWordGap()
+    }, this.unitMs * WORD_GAP_UNITS)
   }
 
   _cancelGapTimer() {
@@ -335,18 +332,10 @@ class PaddleKeyer {
     }
   }
 
-  _appendCharGap() {
-    if (this.isLeftPressed || this.isRightPressed) return
-    if (this.timingText.length > 0 && !this.timingText.endsWith('/') && !this.timingText.endsWith('|')) {
-      this.timingText += '/'
-      this.onTimingUpdate(this.timingText)
-    }
-  }
-
   _appendWordGap() {
     if (this.isLeftPressed || this.isRightPressed) return
-    if (this.timingText.endsWith('/')) {
-      this.timingText = this.timingText.slice(0, -1) + '|'
+    if (this.timingText.length > 0 && !this.timingText.endsWith('|')) {
+      this.timingText += '|'
       this.onTimingUpdate(this.timingText)
     }
   }
