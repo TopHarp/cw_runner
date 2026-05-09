@@ -5,7 +5,6 @@
       <button class="btn-help" bindtap="onHelp">帮助</button>
     </view>
     <view class="display-header">
-      <text class="display-title">时序记录</text>
       <view class="display-actions">
         <button class="btn-send {{timingText.length > 0 ? 'active' : ''}}" bindtap="onSend">保存</button>
         <button class="btn-delete" bindtap="onDelete">删除</button>
