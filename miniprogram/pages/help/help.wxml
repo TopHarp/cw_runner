@@ -27,9 +27,12 @@
       </view>
 
       <view class="help-section">
-        <text class="section-title">四、侧音开关</text>
+        <text class="section-title">四、侧音及振动</text>
         <text class="section-text">• Paddle 区域中间的开关可控制是否有按键侧音</text>
         <text class="section-text">• 默认关闭侧音，仅保留视觉反馈</text>
+        <text class="section-text">• Paddle 区域中间的开关可控制是否有按键振动</text>
+        <text class="section-text">• 默认关闭振动，仅保留视觉反馈</text>
+        <text class="section-text">• 手机需要设置中开启“触摸时振动”功能</text>
       </view>
 
       <view class="help-footer">

@@ -9,7 +9,7 @@
 const UNIT_MS = 60
 const DASH_MS = UNIT_MS * 3
 const TONE_FREQ = 600
-const WORD_GAP_UNITS = 4  // 单词间隔 = 4 * unit，可调
+const WORD_GAP_UNITS = 3  // 单词间隔 = 4 * unit，可调
 const DEFAULT_WPM = 15    // 启动默认速度
 
 // ==================== WebAudio 实时合成 ====================
@@ -191,6 +191,7 @@ class PaddleKeyer {
     this.onTimingUpdate = options.onTimingUpdate || (() => {})
     this.onToneStart = options.onToneStart || (() => {})
     this.onToneEnd = options.onToneEnd || (() => {})
+    this.onVibrate = options.onVibrate || (() => {})  // 新增振动回调
 
     this.unitMs = options.unitMs || UNIT_MS
     this.iambicMode = options.iambicMode || 'B'
@@ -302,6 +303,9 @@ class PaddleKeyer {
       playTone(element)
     }
     this.onToneStart(element)
+
+    // 每次发报都触发振动
+    this.onVibrate(element)
 
     this.timingText += symbol
     this.onTimingUpdate(this.timingText)

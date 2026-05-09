@@ -22,7 +22,9 @@ Page({
     flashDit: false,
     flashDah: false,
     // 侧音开关
-    audioEnabled: false
+    audioEnabled: false,
+    // 振动开关
+    vibrateEnabled: false
   },
 
   paddleKeyer: null,
@@ -47,6 +49,11 @@ Page({
             flashDit: false,
             flashDah: false
           })
+        },
+        onVibrate: (element) => {  // 新增振动
+          if (this.data.vibrateEnabled) {
+            this._doVibrate()
+          }
         }
       })
       // 等待音频初始化完成（新 cw.js 使用 init() 方法）
@@ -133,6 +140,20 @@ Page({
     const newState = !this.data.audioEnabled
     setAudioEnabled(newState)
     this.setData({ audioEnabled: newState })
+  },
+
+  onVibrateToggle() {
+    const newState = !this.data.vibrateEnabled
+    this.setData({ vibrateEnabled: newState })
+    wx.showToast({ title: newState ? '振动已开启，需要手机开启“触摸时振动“' : '振动已关闭', icon: 'none' })
+    // 立即测试一次，让用户感知
+    if (newState) {
+      this._doVibrate()
+    }
+  },
+
+  _doVibrate() {
+    wx.vibrateShort()
   },
 
   onClear() {

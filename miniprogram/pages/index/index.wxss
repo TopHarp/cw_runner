@@ -347,6 +347,14 @@
   color: #e94560;
 }
 
+/* 振动开关 */
+.vibrate-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+}
+
 /* 侧音开关 */
 .audio-toggle {
   display: flex;

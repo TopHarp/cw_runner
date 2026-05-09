@@ -76,10 +76,16 @@
         <text class="flash-symbol">−</text>
       </view>
     </view>
-    <!-- 左右桨说明 + 侧音开关：同一行 -->
+    <!-- 左右桨说明 + 振动/侧音开关：同一行 -->
     <view class="paddle-hint-row">
       <view class="paddle-hint">
         <text>左桨: 点(dit) · 右桨: 划(dah)</text>
+      </view>
+      <view class="vibrate-toggle" bindtap="onVibrateToggle">
+        <text class="toggle-label">振动</text>
+        <view class="toggle-switch {{vibrateEnabled ? 'on' : ''}}">
+          <view class="toggle-knob"></view>
+        </view>
       </view>
       <view class="audio-toggle" bindtap="onAudioToggle">
         <text class="toggle-label">侧音</text>
