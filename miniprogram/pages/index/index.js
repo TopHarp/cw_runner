@@ -1,11 +1,11 @@
-const { PaddleKeyer, playCode, setAudioEnabled, activateAudio } = require('../../utils/cw.js')
+const { PaddleKeyer, playCode, setAudioEnabled, activateAudio, DEFAULT_WPM } = require('../../utils/cw.js')
 const { uploadCW, getCWList } = require('../../utils/cloud.js')
 const { CLOUD_ENABLED } = require('../../utils/config.js')
 
 Page({
   data: {
     timingText: '',
-    wpm: 20,
+    wpm: DEFAULT_WPM,
     cwList: [],
     isLeftPressed: false,
     isRightPressed: false,
@@ -246,7 +246,7 @@ Page({
 
     this.setData({ playingId: id })
 
-    playCode(code, wpm || 20)
+    playCode(code, wpm || DEFAULT_WPM)
       .then(() => {
         this.setData({ playingId: '' })
       })

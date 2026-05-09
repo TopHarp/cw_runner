@@ -10,6 +10,7 @@ const UNIT_MS = 60
 const DASH_MS = UNIT_MS * 3
 const TONE_FREQ = 600
 const WORD_GAP_UNITS = 4  // 单词间隔 = 4 * unit，可调
+const DEFAULT_WPM = 15    // 启动默认速度
 
 // ==================== WebAudio 实时合成 ====================
 
@@ -109,7 +110,7 @@ function stopTone() {
  * @param {string} code - 如 ".-/-.../.-."
  * @param {number} wpm - 发报速度
  */
-function playCode(code, wpm = 20) {
+function playCode(code, wpm = DEFAULT_WPM) {
   return new Promise((resolve) => {
     if (!_audioReady) {
       console.warn('音频未就绪，跳过播放')
@@ -345,6 +346,8 @@ module.exports = {
   UNIT_MS,
   DASH_MS,
   TONE_FREQ,
+  WORD_GAP_UNITS,
+  DEFAULT_WPM,
   playTone,
   playCode,
   initAudioFiles,
