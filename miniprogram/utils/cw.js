@@ -9,7 +9,7 @@
 const UNIT_MS = 60
 const DASH_MS = UNIT_MS * 3
 const TONE_FREQ = 600
-const WORD_GAP_UNITS = 3  // 单词间隔 = 3 * unit，可调
+const WORD_GAP_UNITS = 2  // 单词间隔 = 2 * unit，可调
 const DEFAULT_WPM = 15    // 启动默认速度
 
 
