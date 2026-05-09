@@ -1,4 +1,4 @@
-const { PaddleKeyer, playCode, setAudioEnabled, activateAudio, DEFAULT_WPM } = require('../../utils/cw.js')
+const { PaddleKeyer, playCode, setAudioEnabled, activateAudio, DEFAULT_WPM, setWordGapUnits, getWordGapUnits } = require('../../utils/cw.js')
 const { uploadCW, getCWList } = require('../../utils/cloud.js')
 const { CLOUD_ENABLED } = require('../../utils/config.js')
 
@@ -24,7 +24,8 @@ Page({
     // 侧音开关
     audioEnabled: false,
     // 振动开关
-    vibrateEnabled: false
+    vibrateEnabled: false,
+    wordGapUnits: getWordGapUnits()    // ← 新增：单词间隔默认值
   },
 
   paddleKeyer: null,
@@ -130,6 +131,12 @@ Page({
     if (this.paddleKeyer) {
       this.paddleKeyer.updateWpm(newWpm)
     }
+  },
+
+  onWordGapChange(e) {    // ← 新增：滑动条改变时调用
+    const units = parseInt(e.detail.value)
+    this.setData({ wordGapUnits: units })
+    setWordGapUnits(units)   // ← 同步修改 cw.js 中的全局值
   },
 
   onHelp() {

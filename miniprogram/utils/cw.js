@@ -9,8 +9,21 @@
 const UNIT_MS = 60
 const DASH_MS = UNIT_MS * 3
 const TONE_FREQ = 600
-const WORD_GAP_UNITS = 3  // 单词间隔 = 4 * unit，可调
+const WORD_GAP_UNITS = 3  // 单词间隔 = 3 * unit，可调
 const DEFAULT_WPM = 15    // 启动默认速度
+
+
+// ==================== 设置单词间隔 ====================
+let _wordGapUnits = WORD_GAP_UNITS  // ← 新增：运行时实际值，初始复制常量
+// 新增：设置单词间隔 unit 数
+function setWordGapUnits(units) {
+  _wordGapUnits = Math.max(2, Math.min(6, units))
+}
+
+// 获取运行时单词间隔 unit 数
+function getWordGapUnits() {
+  return _wordGapUnits
+}
 
 // ==================== WebAudio 实时合成 ====================
 
@@ -128,7 +141,7 @@ function playCode(code, wpm = DEFAULT_WPM) {
         case '.': totalMs += unitMs * 2; break
         case '-': totalMs += unitMs * 4; break
         case '/': totalMs += unitMs * 2; break
-        case '|': totalMs += unitMs * (WORD_GAP_UNITS - 1); break
+        case '|': totalMs += unitMs * (_wordGapUnits); break
         default: break
       }
     }
@@ -172,8 +185,8 @@ function playCode(code, wpm = DEFAULT_WPM) {
           t += unitSec * 2
           break
         case '|':
-          // 单词间隔：额外静音 (WORD_GAP_UNITS - 1)*unitSec
-          t += unitSec * (WORD_GAP_UNITS - 1)
+          // 单词间隔：额外静音 (_wordGapUnits)*unitSec
+          t += unitSec * (_wordGapUnits)
           break
         default:
           break
@@ -324,10 +337,10 @@ class PaddleKeyer {
     this.lastReleaseTime = Date.now()
     this._cancelGapTimer()
 
-    // WORD_GAP_UNITS * unit 后加单词间隔 |
+    // _wordGapUnits * unit 后加单词间隔 |
     this.gapTimer = setTimeout(() => {
       this._appendWordGap()
-    }, this.unitMs * WORD_GAP_UNITS)
+    }, this.unitMs * _wordGapUnits)
   }
 
   _cancelGapTimer() {
@@ -346,6 +359,8 @@ class PaddleKeyer {
   }
 }
 
+// ==================== 模块导出 ====================
+
 module.exports = {
   UNIT_MS,
   DASH_MS,
@@ -359,5 +374,7 @@ module.exports = {
   setAudioEnabled,
   isAudioEnabled,
   activateAudio,
+  setWordGapUnits,      // ← 新增导出
+  getWordGapUnits,      // ← 新增导出
   PaddleKeyer
 }

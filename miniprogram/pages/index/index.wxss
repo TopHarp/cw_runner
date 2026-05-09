@@ -151,6 +151,32 @@
   text-align: right;
 }
 
+.gap-control {
+  display: flex;
+  align-items: center;      /* ← 修改：横向排列，与 wpm-control 一致 */
+  gap: 16rpx;               /* ← 新增：与 wpm-control 一致 */
+  margin-top: 12rpx;        /* ← 新增：与上方 wpm-control 间距 */
+}
+
+.gap-label {
+  font-size: 24rpx;
+  color: #a0a0a0;           /* ← 修改：与 wpm-label 颜色一致 */
+  flex-shrink: 0;           /* ← 新增：与 wpm-label 一致 */
+}
+
+.gap-slider {
+  flex: 1;                  /* ← 修改：占据剩余空间，与 wpm-slider 一致 */
+}
+
+.gap-value {                 /* ← 新增：显示数值，与 wpm-value 对应 */
+  font-size: 24rpx;
+  color: #e94560;           /* ← 与 wpm-value 颜色一致 */
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 80rpx;
+  text-align: right;
+}
+
 /* ==================== 本地模式提示 ==================== */
 
 .local-mode-banner {

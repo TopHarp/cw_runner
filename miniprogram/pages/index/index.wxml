@@ -16,7 +16,7 @@
       </text>
     </scroll-view>
     <view class="wpm-control">
-      <text class="wpm-label">速度</text>
+      <text class="wpm-label">电键速度</text>
       <slider class="wpm-slider" 
               min="5" 
               max="40" 
@@ -27,6 +27,21 @@
               block-color="#e94560"
               bindchange="onWpmChange"/>
       <text class="wpm-value">{{wpm}} WPM</text>
+    </view>
+    <!-- 单词间隔调节：新增 -->
+    <view class="gap-control">
+      <text class="gap-label">报文间隔</text>    <!-- ← 修改：简化文字，与"速度"对应 -->
+      <slider class="gap-slider"
+              min="2" 
+              max="6" 
+              step="1"
+              value="{{wordGapUnits}}" 
+              show-value
+              activeColor="#e94560"
+              backgroundColor="#0f3460"
+              block-color="#e94560"
+              bindchange="onWordGapChange"/>
+      <text class="gap-value">{{wordGapUnits}} unit</text>   <!-- ← 新增：与 wpm-value 对应 -->
     </view>
   </view>
 
