@@ -1,6 +1,9 @@
 <view class="container" bindtouchstart="onFirstTouch">
   <!-- 上半区：实时时序显示 -->
   <view class="display-area">
+    <view class="help-bar">
+      <button class="btn-help" bindtap="onHelp">帮助</button>
+    </view>
     <view class="display-header">
       <text class="display-title">时序记录</text>
       <view class="display-actions">

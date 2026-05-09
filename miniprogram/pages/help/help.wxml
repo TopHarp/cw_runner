@@ -1,0 +1,45 @@
+<view class="container">
+  <scroll-view class="help-scroll" scroll-y enhanced show-scrollbar>
+    <view class="help-content">
+      <text class="help-title">CW Runner 使用帮助</text>
+
+      <view class="help-section">
+        <text class="section-title">一、模拟电键</text>
+        <text class="section-text">• 左桨（· DIT）：按下发出"点"（.）</text>
+        <text class="section-text">• 右桨（− DAH）：按下发出"划"（-）</text>
+        <text class="section-text">• 左右同时按下：自动键 Iambic B 模式，交替发点和划</text>
+        <text class="section-text">• 按住不放：自动连续发送</text>
+        <text class="section-text">• 速度调节：拖动滑块调整 WPM（每分钟字数）</text>
+      </view>
+
+      <view class="help-section">
+        <text class="section-title">二、时序记录</text>
+        <text class="section-text">• 时序区实时显示你发送的摩尔斯电码</text>
+        <text class="section-text">• 单词之间会自动插入 "|" 分隔</text>
+        <text class="section-text">• 点击"删除"可删除最后一个字符</text>
+        <text class="section-text">• 点击"保存"将当前报文上传到云端（25分钟后自动删除）</text>
+      </view>
+
+      <view class="help-section">
+        <text class="section-title">三、模拟回放</text>
+        <text class="section-text">• 在"模拟报文"列表中点击 ▶ 按钮播放报文</text>
+        <text class="section-text">• 根据听到的声音在纸上抄收练习</text>
+      </view>
+
+      <view class="help-section">
+        <text class="section-title">四、侧音开关</text>
+        <text class="section-text">• Paddle 区域中间的开关可控制是否有按键侧音</text>
+        <text class="section-text">• 默认关闭侧音，仅保留视觉反馈</text>
+      </view>
+
+      <view class="help-footer">
+        <text class="footer-text">作者：BG8KYS</text>
+        <text class="footer-text">项目地址：https://github.com/TopHarp/cw_runner</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="back-bar">
+    <button class="btn-back" bindtap="onBack">返回</button>
+  </view>
+</view>

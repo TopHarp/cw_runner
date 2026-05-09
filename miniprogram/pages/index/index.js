@@ -125,6 +125,10 @@ Page({
     }
   },
 
+  onHelp() {
+    wx.navigateTo({ url: '/pages/help/help' })
+  },
+
   onAudioToggle() {
     const newState = !this.data.audioEnabled
     setAudioEnabled(newState)
