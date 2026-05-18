@@ -101,20 +101,23 @@ async function activateAudio() {
 
 function playTone(type) {
   if (!_audioReady || !_audioEnabled) return
-  // 尽力而为，不阻塞。正常情况下上下文已由 activateAudio() 提前激活
+  // 尽力 resume，不阻塞
   if (audioCtx && audioCtx.state === 'suspended') {
     audioCtx.resume()
   }
-  // 取消任何预设的增益调度（防止 playCode 的残留调度干扰）
+  // 取消残留调度，并用 setValueAtTime 预写入时间轴
+  // 即使上下文处于 suspended，resume 完成后调度仍会生效
   if (gainNode) {
-    gainNode.gain.cancelScheduledValues(audioCtx.currentTime)
-    gainNode.gain.value = 1
+    const now = audioCtx.currentTime
+    gainNode.gain.cancelScheduledValues(now)
+    gainNode.gain.setValueAtTime(1, now)
   }
 }
 
 function stopTone() {
   if (!_audioReady || !gainNode) return
-  gainNode.gain.value = 0
+  const now = audioCtx.currentTime
+  gainNode.gain.setValueAtTime(0, now)
 }
 
 /**
