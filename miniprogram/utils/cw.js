@@ -149,13 +149,7 @@ function playCode(code, wpm = DEFAULT_WPM) {
       }
     }
 
-    if (!_audioEnabled) {
-      // 静音模式：只等待对应时长后 resolve
-      setTimeout(resolve, totalMs + 50)
-      return
-    }
-
-    // 尽力而为，不阻塞
+    // 列表播放始终有声，不受侧音开关控制
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume()
     }
