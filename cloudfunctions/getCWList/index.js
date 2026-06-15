@@ -6,7 +6,7 @@ cloud.init({
 
 const db = cloud.database()
 const MAX_LIMIT = 50
-const EXPIRE_SECONDS = 8 * 60 * 60  // 8小时过期
+const EXPIRE_SECONDS = 48 * 60 * 60  // 48小时过期
 
 exports.main = async (event, context) => {
   const { limit = 20, offset = 0 } = event

@@ -74,6 +74,22 @@ Page({
     if (!CLOUD_ENABLED) {
       console.log('[本地模式] 云端存储已关闭，报文仅保存到本地 Mock')
     }
+
+    // 首次使用提示：建议使用振动侧音
+    const hasShownVibrateTip = wx.getStorageSync('cw_vibrate_tip_shown')
+    if (!hasShownVibrateTip) {
+      wx.showModal({
+        title: '使用建议',
+        content: '由于音频有延迟，建议使用振动作为侧音效果最佳，打开页面侧音开关，并且手机设置中开启触摸振动',
+        showCancel: false,
+        confirmText: '知道了',
+        success(res) {
+          if (res.confirm) {
+            wx.setStorageSync('cw_vibrate_tip_shown', true)
+          }
+        }
+      })
+    }
   },
 
   onUnload() {

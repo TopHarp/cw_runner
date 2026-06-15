@@ -7,7 +7,7 @@ cloud.init({
 const db = cloud.database()
 const MAX_CODE_LENGTH = 500
 const MAX_UPLOAD_PER_HOUR = 50
-const EXPIRE_SECONDS = 8 * 60 * 60  // 8小时过期
+const EXPIRE_SECONDS = 48 * 60 * 60  // 48小时过期
 
 exports.main = async (event, context) => {
   const { code, wpm = 20 } = event
