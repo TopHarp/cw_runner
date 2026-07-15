@@ -17,7 +17,7 @@
         <text class="section-text">• 时序区实时显示你发送的摩尔斯电码</text>
         <text class="section-text">• 单词之间会自动插入 "|" 分隔</text>
         <text class="section-text">• 点击"删除"可删除最后一个字符</text>
-        <text class="section-text">• 点击"保存"将当前报文上传到云端（25分钟后自动删除）</text>
+        <text class="section-text">• 点击"保存"将当前报文上传到云端（所有用户可见/48小时删除）</text>
       </view>
 
       <view class="help-section">
@@ -28,9 +28,9 @@
 
       <view class="help-section">
         <text class="section-title">四、侧音及振动</text>
-        <text class="section-text">• Paddle 区域中间的开关可控制是否有按键侧音</text>
-        <text class="section-text">• 默认关闭侧音，仅保留视觉反馈</text>
-        <text class="section-text">• Paddle 区域中间的开关可控制是否有按键振动</text>
+        <text class="section-text">• 音频延迟大，强烈推荐振动侧音模式</text>
+        <text class="section-text">• 默认关闭音频侧音，仅保留视觉反馈</text>
+        <text class="section-text">• “振动”开关可控制是否有按键振动</text>
         <text class="section-text">• 默认关闭振动，仅保留视觉反馈</text>
         <text class="section-text">• 手机需要设置中开启“触摸时振动”功能</text>
       </view>

@@ -12,7 +12,7 @@
     </view>
     <scroll-view class="timing-scroll" scroll-y enhanced show-scrollbar>
       <text class="timing-text {{timingText.length === 0 ? 'placeholder' : ''}}">
-        {{timingText || '按下电键开始输入...'}}
+        {{timingText || '点击保存报文所有用户可见，试试通联：） 强烈推荐振动侧音模式'}}
       </text>
     </scroll-view>
     <view class="wpm-control">
