@@ -97,13 +97,13 @@
         <text>左桨: 点(dit) · 右桨: 划(dah)</text>
       </view>
       <view class="vibrate-toggle" bindtap="onVibrateToggle">
-        <text class="toggle-label">振动</text>
+        <text class="toggle-label">振动侧音(推荐)</text>
         <view class="toggle-switch {{vibrateEnabled ? 'on' : ''}}">
           <view class="toggle-knob"></view>
         </view>
       </view>
       <view class="audio-toggle" bindtap="onAudioToggle">
-        <text class="toggle-label">侧音</text>
+        <text class="toggle-label">音频侧音(不推荐)</text>
         <view class="toggle-switch {{audioEnabled ? 'on' : ''}}">
           <view class="toggle-knob"></view>
         </view>
