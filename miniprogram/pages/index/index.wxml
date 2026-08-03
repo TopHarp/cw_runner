@@ -7,7 +7,7 @@
     <view class="display-header">
       <view class="display-actions">
         <button class="btn-send {{timingText.length > 0 ? 'active' : ''}}" bindtap="onSend">保存</button>
-        <button class="btn-delete" bindtap="onDelete">删除</button>
+        <button class="btn-delete" bindtap="onDelete" bindlongpress="onDeleteLongPress" bindtouchend="onDeleteLongEnd" bindtouchcancel="onDeleteLongEnd">删除</button>
       </view>
     </view>
     <scroll-view class="timing-scroll" scroll-y enhanced show-scrollbar>

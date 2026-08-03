@@ -93,6 +93,7 @@ Page({
   },
 
   onUnload() {
+    this._stopFastDelete()
     if (this.paddleKeyer) {
       this.paddleKeyer.clear()
     }
@@ -180,6 +181,7 @@ Page({
   },
 
   onClear() {
+    this._stopFastDelete()
     if (this.paddleKeyer) {
       this.paddleKeyer.clear()
     }
@@ -195,6 +197,43 @@ Page({
     if (this.paddleKeyer) {
       this.paddleKeyer._cancelGapTimer()
       // 恢复删除后的时序文本
+      this.paddleKeyer.restoreTiming(newText)
+    }
+    this.setData({ timingText: newText })
+  },
+
+  onDeleteLongPress() {
+    this._startFastDelete()
+  },
+
+  onDeleteLongEnd() {
+    this._stopFastDelete()
+  },
+
+  _startFastDelete() {
+    if (this._fastDeleteTimer) return
+    // 先删除一次（长按触发时本身不执行 onDelete，所以这里补一次）
+    this._doFastDeleteTick()
+    this._fastDeleteTimer = setInterval(() => {
+      this._doFastDeleteTick()
+    }, 120)
+  },
+
+  _stopFastDelete() {
+    if (this._fastDeleteTimer) {
+      clearInterval(this._fastDeleteTimer)
+      this._fastDeleteTimer = null
+    }
+  },
+
+  _doFastDeleteTick() {
+    if (!this.data.timingText || this.data.timingText.length === 0) {
+      this._stopFastDelete()
+      return
+    }
+    const newText = this.data.timingText.slice(0, -1)
+    if (this.paddleKeyer) {
+      this.paddleKeyer._cancelGapTimer()
       this.paddleKeyer.restoreTiming(newText)
     }
     this.setData({ timingText: newText })
