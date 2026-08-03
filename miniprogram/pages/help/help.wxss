@@ -42,6 +42,220 @@
   margin-bottom: 8rpx;
 }
 
+/* ==================== 留言板 ==================== */
+
+.guestbook-section {
+  margin-bottom: 40rpx;
+  padding: 24rpx;
+  background-color: #0f3460;
+  border-radius: 16rpx;
+}
+
+.guestbook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.guestbook-header .section-title {
+  margin-bottom: 0;
+}
+
+.guestbook-tip {
+  font-size: 22rpx;
+  color: #888;
+}
+
+.guestbook-input-area {
+  background-color: #16213e;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.guestbook-input {
+  width: 100%;
+  min-height: 140rpx;
+  max-height: 280rpx;
+  font-size: 28rpx;
+  color: #eee;
+  line-height: 1.6;
+}
+
+.guestbook-input-placeholder {
+  color: #666;
+}
+
+.guestbook-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12rpx;
+}
+
+.guestbook-count {
+  font-size: 24rpx;
+  color: #888;
+}
+
+.btn-submit {
+  font-size: 26rpx;
+  padding: 10rpx 32rpx;
+  background-color: #333;
+  color: #666;
+  border-radius: 8rpx;
+  line-height: 1.5;
+  transition: all 0.2s;
+}
+
+.btn-submit::after {
+  border: none;
+}
+
+.btn-submit.active {
+  background-color: #e94560;
+  color: #fff;
+}
+
+.btn-submit.active:active {
+  opacity: 0.8;
+}
+
+.guestbook-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.comment-item {
+  background-color: #16213e;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.comment-item:active {
+  opacity: 0.8;
+}
+
+.comment-content {
+  flex: 1;
+  font-size: 28rpx;
+  color: #eee;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comment-time {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #888;
+}
+
+.comment-empty {
+  text-align: center;
+  padding: 40rpx 0;
+  color: #666;
+  font-size: 26rpx;
+}
+
+/* ==================== 留言详情弹窗 ==================== */
+
+.comment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 1000;
+}
+
+.comment-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.comment-modal-content {
+  width: 80%;
+  max-width: 560rpx;
+  max-height: 70vh;
+  background-color: #16213e;
+  border-radius: 16rpx;
+  border: 2rpx solid #0f3460;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.comment-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx;
+  border-bottom: 2rpx solid #0f3460;
+}
+
+.comment-modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #e94560;
+}
+
+.comment-modal-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #888;
+}
+
+.comment-modal-close:active {
+  color: #fff;
+}
+
+.comment-modal-body {
+  flex: 1;
+  max-height: 50vh;
+  padding: 24rpx;
+}
+
+.comment-modal-text {
+  font-size: 30rpx;
+  color: #eee;
+  line-height: 1.8;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.comment-modal-footer {
+  padding: 20rpx 24rpx;
+  border-top: 2rpx solid #0f3460;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.comment-modal-time {
+  font-size: 24rpx;
+  color: #888;
+}
+
+/* ==================== 底部 ==================== */
+
 .help-footer {
   margin-top: 60rpx;
   padding-top: 32rpx;

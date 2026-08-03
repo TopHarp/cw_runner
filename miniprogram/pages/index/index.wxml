@@ -2,7 +2,7 @@
   <!-- 上半区：实时时序显示 -->
   <view class="display-area">
     <view class="help-bar">
-      <button class="btn-help" bindtap="onHelp">帮助</button>
+      <button class="btn-help" bindtap="onHelp">帮助/留言</button>
     </view>
     <view class="display-header">
       <view class="display-actions">

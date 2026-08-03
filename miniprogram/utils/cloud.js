@@ -1,12 +1,14 @@
 /**
  * 云开发封装工具
- * 负责：CW 文本上传、云端列表获取
+ * 负责：CW 文本上传、云端列表获取、留言板
  * CLOUD_ENABLED=false 时使用本地 Mock 数据（无云环境权限时调试用）
  */
 
 const { CLOUD_ENABLED } = require('./config.js')
 
 const DB_NAME = 'cw_messages'
+const COMMENT_DB_NAME = 'cw_comments'
+const COMMENT_EXPIRE_SECONDS = 200 * 60 * 60  // 200小时
 
 // 本地调试用的 Mock 数据
 const MOCK_LIST = [
@@ -14,6 +16,8 @@ const MOCK_LIST = [
   { _id: 'mock_2', code: '--./.-..', wpm: 18, timestamp: Math.floor(Date.now() / 1000) - 900 },
   { _id: 'mock_3', code: '.../---/...', wpm: 25, timestamp: Math.floor(Date.now() / 1000) - 1800 }
 ]
+
+const MOCK_COMMENTS = []
 
 /**
  * 上传 CW 时序文本
@@ -121,8 +125,103 @@ function getCWListDirect(limit = 20) {
     .then(res => res.data)
 }
 
+// ==================== 留言板 ====================
+
+/**
+ * 上传留言
+ * @param {string} content - 留言内容
+ * @returns {Promise<{success: boolean, id?: string, errMsg?: string}>}
+ */
+function uploadComment(content) {
+  return new Promise((resolve, reject) => {
+    if (!content || typeof content !== 'string') {
+      reject({ success: false, errMsg: '留言内容不能为空' })
+      return
+    }
+
+    const trimmed = content.trim()
+    if (trimmed.length === 0) {
+      reject({ success: false, errMsg: '留言内容不能为空' })
+      return
+    }
+
+    if (trimmed.length > 300) {
+      reject({ success: false, errMsg: '留言内容不能超过 300 字' })
+      return
+    }
+
+    const now = Math.floor(Date.now() / 1000)
+
+    // 本地模式
+    if (!CLOUD_ENABLED) {
+      // 清理过期 Mock 数据
+      const expireTime = now - COMMENT_EXPIRE_SECONDS
+      for (let i = MOCK_COMMENTS.length - 1; i >= 0; i--) {
+        if (MOCK_COMMENTS[i].timestamp < expireTime) {
+          MOCK_COMMENTS.splice(i, 1)
+        }
+      }
+      const mockItem = {
+        _id: 'comment_' + Date.now(),
+        content: trimmed,
+        timestamp: now
+      }
+      MOCK_COMMENTS.unshift(mockItem)
+      if (MOCK_COMMENTS.length > 50) MOCK_COMMENTS.pop()
+      resolve({ success: true, id: mockItem._id })
+      return
+    }
+
+    // 云端模式
+    wx.cloud.callFunction({
+      name: 'uploadComment',
+      data: { content: trimmed }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        resolve({ success: true, id: res.result.id })
+      } else {
+        reject({ success: false, errMsg: res.result.errMsg || '保存失败' })
+      }
+    }).catch(err => {
+      reject({ success: false, errMsg: err.message || '网络错误' })
+    })
+  })
+}
+
+/**
+ * 获取留言列表
+ * @param {number} limit - 每页数量（默认 50）
+ * @returns {Promise<{success: boolean, list?: Array, errMsg?: string}>}
+ */
+function getCommentList(limit = 50) {
+  return new Promise((resolve, reject) => {
+    if (!CLOUD_ENABLED) {
+      const now = Math.floor(Date.now() / 1000)
+      const expireTime = now - COMMENT_EXPIRE_SECONDS
+      const list = MOCK_COMMENTS.filter(item => item.timestamp >= expireTime)
+      resolve({ success: true, list })
+      return
+    }
+
+    wx.cloud.callFunction({
+      name: 'getCommentList',
+      data: { limit }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        resolve({ success: true, list: res.result.list || [] })
+      } else {
+        reject({ success: false, errMsg: res.result.errMsg || '获取留言失败' })
+      }
+    }).catch(err => {
+      reject({ success: false, errMsg: err.message || '网络错误' })
+    })
+  })
+}
+
 module.exports = {
   uploadCW,
   getCWList,
-  getCWListDirect
+  getCWListDirect,
+  uploadComment,
+  getCommentList
 }

@@ -16,7 +16,7 @@
         <text class="section-title">二、时序记录</text>
         <text class="section-text">• 时序区实时显示你发送的摩尔斯电码</text>
         <text class="section-text">• 单词之间会自动插入 "|" 分隔</text>
-        <text class="section-text">• 点击"删除"可删除最后一个字符</text>
+        <text class="section-text">• 点击"删除"可删除最后一个字符，长按可快速清空</text>
         <text class="section-text">• 点击"保存"将当前报文上传到云端（所有用户可见/48小时删除）</text>
       </view>
 
@@ -35,6 +35,44 @@
         <text class="section-text">• 手机需要设置中开启“触摸时振动”功能</text>
       </view>
 
+      <!-- 留言板 -->
+      <view class="guestbook-section">
+        <view class="guestbook-header">
+          <text class="section-title">五、留言板</text>
+          <text class="guestbook-tip">留言 200 小时后自动删除</text>
+        </view>
+
+        <view class="guestbook-input-area">
+          <textarea class="guestbook-input"
+                    placeholder="写下你的留言..."
+                    placeholder-class="guestbook-input-placeholder"
+                    maxlength="300"
+                    value="{{commentText}}"
+                    bindinput="onCommentInput" />
+          <view class="guestbook-actions">
+            <text class="guestbook-count">{{commentText.length || 0}}/300</text>
+            <button class="btn-submit {{commentText.length > 0 ? 'active' : ''}}"
+                    bindtap="onSubmitComment">保存</button>
+          </view>
+        </view>
+
+        <view class="guestbook-list">
+          <block wx:if="{{commentList.length > 0}}">
+            <view class="comment-item"
+                  wx:for="{{commentList}}"
+                  wx:key="_id"
+                  data-index="{{index}}"
+                  bindtap="onCommentTap">
+              <text class="comment-content">{{item.preview}}</text>
+              <text class="comment-time">{{item.timeStr}}</text>
+            </view>
+          </block>
+          <view class="comment-empty" wx:else>
+            <text>暂无留言，来抢沙发吧~</text>
+          </view>
+        </view>
+      </view>
+
       <view class="help-footer">
         <text class="footer-text">作者：BG8KYS</text>
         <text class="footer-text">项目地址：https://github.com/TopHarp/cw_runner</text>
@@ -44,5 +82,21 @@
 
   <view class="back-bar">
     <button class="btn-back" bindtap="onBack">返回</button>
+  </view>
+
+  <!-- 留言详情弹窗 -->
+  <view class="comment-modal {{showCommentModal ? 'show' : ''}}" catchtap="onModalBackdropTap">
+    <view class="comment-modal-content" catchtap="onModalContentTap">
+      <view class="comment-modal-header">
+        <text class="comment-modal-title">留言详情</text>
+        <view class="comment-modal-close" bindtap="closeCommentModal">✕</view>
+      </view>
+      <scroll-view class="comment-modal-body" scroll-y enhanced show-scrollbar>
+        <text class="comment-modal-text">{{selectedComment.content}}</text>
+      </scroll-view>
+      <view class="comment-modal-footer">
+        <text class="comment-modal-time">{{selectedComment.timeStr}}</text>
+      </view>
+    </view>
   </view>
 </view>
